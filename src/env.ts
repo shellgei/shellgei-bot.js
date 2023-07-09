@@ -19,5 +19,15 @@ const LOG_PATH: Readonly<string> = process.env.LOG_PATH ?? path.join(__dirname, 
 const MISS_KEY_HOST: Readonly<string> = process.env.MISS_KEY_HOST ?? '';
 const MISS_KEY_MENTION_SECRET: Readonly<string> = process.env.MISS_KEY_MENTION_SECRET ?? '';
 const MISS_KEY_CREATE_NOTE_API_KEY: Readonly<string> = process.env.MISS_KEY_CREATE_NOTE_API_KEY ?? '';
+const MISS_KEY_BOT_USER_ID: Readonly<string> = process.env.MISS_KEY_BOT_USER_ID ?? '';
 
-export {DEV_MODE, PORT, PING_MSG, LOG_PATH, MISS_KEY_HOST, MISS_KEY_MENTION_SECRET, MISS_KEY_CREATE_NOTE_API_KEY}
+export {
+  DEV_MODE,
+  PORT,
+  PING_MSG,
+  LOG_PATH,
+  MISS_KEY_HOST,
+  MISS_KEY_MENTION_SECRET,
+  MISS_KEY_CREATE_NOTE_API_KEY,
+  MISS_KEY_BOT_USER_ID
+}
