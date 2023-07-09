@@ -3,7 +3,8 @@
   "private": true,
   "main": "dist/main.js",
   "scripts": {
-    "build": "tsc",
+    "prebuild": "rm -rf ./dist",
+    "build": "tsc --outDir ./dist",
     "prestart": "npm run build",
     "start": "TZ=Asia/Tokyo node --enable-source-maps dist/main.js",
     "start:dev": "NODE_ENV=development npm run start",
