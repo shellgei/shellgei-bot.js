@@ -1,4 +1,4 @@
-import {MISS_KEY_CREATE_NOTE_API_KEY, MISS_KEY_HOST} from '../../../env';
+import {MISS_KEY_CREATE_NOTE_API_KEY, MISS_KEY_HOST, MISS_KEY_REACTION_API_KEY} from '../../../env';
 
 const missKeyBaseUrl = new URL(`https://${MISS_KEY_HOST}`)
 
@@ -14,13 +14,13 @@ const fetchApi = (pathName: string, apiKey: string) => {
       headers,
       body: JSON.stringify({...body, i: apiKey}),
     })
-    return await res.json();
+    return await res.text();
   };
 }
 
-
 const fetchMissKeyApi = {
-  createNote: fetchApi('/api/notes/create', MISS_KEY_CREATE_NOTE_API_KEY)
+  createNote: fetchApi('/api/notes/create', MISS_KEY_CREATE_NOTE_API_KEY),
+  addReaction: fetchApi('/api/notes/reactions/create', MISS_KEY_REACTION_API_KEY),
 }
 
 export default fetchMissKeyApi

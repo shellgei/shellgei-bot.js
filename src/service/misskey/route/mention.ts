@@ -1,54 +1,34 @@
 import {Request, Response} from 'express';
-import {getMissKeyHookId, getMissKeyHookSecret} from '../utils/getMissKeyHeader';
-import {MISS_KEY_BOT_USER_ID, MISS_KEY_MENTION_SECRET} from '../../../env';
+import {Worker} from 'worker_threads';
+import {getMissKeyWorkerPath} from '../utils/getMissKeyWorkerPath';
 import logger from '../../../logger';
+import {getMissKeyHookId, getMissKeyHookSecret} from '../utils/getMissKeyHeader';
 import fetchMissKeyApi from '../utils/api';
 
 
 const mention = async (req: Request, res: Response) => {
   // logger.log(    JSON.stringify(req?.body, null, 2))
+
   const secret = getMissKeyHookSecret(req?.headers);
   const hookId = getMissKeyHookId(req?.headers);
-  if (secret !== MISS_KEY_MENTION_SECRET) {
-    logger.error(hookId, ' secret is not match: ', secret)
-    return;
-  }
+  const {eventId, type} = req?.body;
+  const renoteId = req?.body?.body?.note?.id;
+  const text = req?.body?.body?.note?.text;
+  const userId = req?.body?.body?.note?.userId;
+  // logger.log(JSON.stringify({secret, hookId, eventId, type, renoteId, text, userId},null,2))
 
-  const {eventId, type, body} = req?.body;
-  if (type !== 'mention') {
-    logger.error(eventId, hookId, ' type is not match: ', type)
-    return;
-  }
+  // リアクションを返す
+  fetchMissKeyApi.addReaction({
+    noteId: renoteId,
+    reaction: '👀',
+  }).catch((err) => logger.error(err?.stack ?? err?.message ?? err ?? 'addReaction error'))
 
-  const renoteId = body?.note?.id;
-  if (!renoteId) {
-    logger.error(eventId, hookId, ' renoteId is null')
-    return;
-  }
 
-  const text = body?.note?.text?.replace('@sh', '')?.trim();
-  if (!text) {
-    logger.error(renoteId, eventId, hookId, ' text is null', body?.note?.text)
-    return;
-  }
-
-  const userId = body?.note?.userId;
-  if (userId === MISS_KEY_BOT_USER_ID) {
-    logger.error(renoteId, eventId, hookId, 'user is me')
-    return;
-  }
-
-  logger.log(eventId, userId, hookId, renoteId, 'fired docker', JSON.stringify({base: body?.note?.text, text,}));
-
-  const reply = text;
-
-  await fetchMissKeyApi.createNote({
-    localOnly: true,
-    noExtractMentions: true,
-    noExtractHashtags: false,
-    noExtractEmojis: false,
-    text: reply + ' -- ok',
-    renoteId,
+  // シェル芸を実行して結果を返す
+  new Worker(getMissKeyWorkerPath('exec'), {
+    workerData: {
+      secret, hookId, eventId, type, renoteId, text, userId
+    }
   })
 }
 
