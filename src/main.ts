@@ -1,9 +1,8 @@
 import express from 'express'
-import {LOG_PATH, PORT} from './env';
+import {DEV_MODE, PING_MSG, PORT} from './env';
 import missKeyRouter from './service/misskey/route';
 import morgan from 'morgan';
 import logger from './logger';
-import * as fs from 'fs';
 import * as bodyParser from 'body-parser';
 
 
@@ -14,12 +13,8 @@ app.use(bodyParser.urlencoded({extended: false}))
 
 app.use(bodyParser.json())
 
-app.use(morgan('combined', {
-  stream: fs.createWriteStream(LOG_PATH, {flags: 'a'})
-}));
+app.use(morgan('combined'));
 
-// app.get('/', (req, res) => res.send(PING_MSG))
-
+DEV_MODE && app.get('/', (req, res) => res.send(PING_MSG))
 app.use('/missKey', missKeyRouter);
-
-app.listen(PORT, () => logger.log('shellgeiBot listening', PORT))
+app.listen(PORT, () => logger.log(process.env.NODE_ENV, ':shellgeiBot listening:', PORT))

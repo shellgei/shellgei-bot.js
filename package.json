@@ -5,7 +5,9 @@
   "scripts": {
     "build": "tsc",
     "prestart": "npm run build",
-    "start": "TZ=Asia/Tokyo node --enable-source-maps dist/main.js"
+    "start": "TZ=Asia/Tokyo node --enable-source-maps dist/main.js",
+    "start:dev": "NODE_ENV=development npm run start",
+    "start:production": "NODE_ENV=production npm run start"
   },
   "dependencies": {
     "@types/express": "^4.17.17",

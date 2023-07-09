@@ -3,23 +3,25 @@
 ## 初期設定
 
 ```shell
+touch .env
 npm install
 ```
 
+作成された.envに必要な環境変数を設定する。
+どんな環境変数が必要かはsrc/env.tsを参照。
+
 # 起動
 
-```shell
-npm run start
-```
-
-## バックグラウンド起動
+## コマンド
 
 ```shell
-nohup npm run start &
-```
+# 開発用起動
+npm run start:dev
 
-切る時
-
-```shell
+# バックグラウンド起動
+nohup npm run start:production &
+# ログをみる
+cat nohup.out
+# バックグラウンド起動の終了
 kill $(ps alx | grep node | grep enable-source-maps | awk '{ print $3 }')
 ```

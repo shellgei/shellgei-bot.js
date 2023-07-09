@@ -1,7 +1,3 @@
-import * as fs from 'fs';
-import {LOG_PATH} from './env';
-
-
 const createMsg = (...msg: any[]) => {
   const now = new Date();
 
@@ -18,17 +14,15 @@ const createMsg = (...msg: any[]) => {
 
 const log = (...msg: any[]) => {
   const message = createMsg(...msg)
-  fs.writeFile(LOG_PATH, message, {flag: 'a'}, () => null)
+  console.log(message)
 }
 const error = (...msg: any[]) => {
   const message = createMsg(...msg)
-  fs.writeFile(LOG_PATH, `[error]${message}`, {flag: 'a'}, () => null)
+  console.error(message)
 }
-
 
 const logger = {
   log, error
 }
-
 
 export default logger
