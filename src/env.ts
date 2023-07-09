@@ -11,7 +11,11 @@ const Num = (num: any) => {
 
 const PORT: Readonly<number> = Num(process.env.PORT) ?? 23344;
 const PING_MSG: Readonly<string> = process.env.PING_MSG ?? 'Hello World!!!!!';
+const LOG_PATH: Readonly<string> = process.env.LOG_PATH ?? path.join(__dirname, '../log/shellgeiBot.log');
 
-const ACCESS_LOG_PATH = process.env.ACCESS_LOG_PATH ?? path.join(__dirname, 'log', 'access.log');
+// missKey
+const MISS_KEY_HOST: Readonly<string> = process.env.MISS_KEY_HOST ?? '';
+const MISS_KEY_MENTION_SECRET: Readonly<string> = process.env.MISS_KEY_MENTION_SECRET ?? '';
+const MISS_KEY_CREATE_NOTE_API_KEY: Readonly<string> = process.env.MISS_KEY_CREATE_NOTE_API_KEY ?? '';
 
-export {PORT, PING_MSG, ACCESS_LOG_PATH}
+export {PORT, PING_MSG, LOG_PATH, MISS_KEY_HOST, MISS_KEY_MENTION_SECRET, MISS_KEY_CREATE_NOTE_API_KEY}
