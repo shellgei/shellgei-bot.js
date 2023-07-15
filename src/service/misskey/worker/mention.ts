@@ -12,6 +12,11 @@ const worker = async (args: any) => {
     return;
   }
 
+  if (!renoteId) {
+    logger.error(eventId, hookId, ' renoteId is null')
+    return;
+  }
+
   // リアクションを返す
   fetchMissKeyApi.addReaction({
     noteId: renoteId,
@@ -20,12 +25,6 @@ const worker = async (args: any) => {
 
   if (type !== 'mention') {
     logger.error(eventId, hookId, ' type is not match: ', type)
-    return;
-  }
-
-
-  if (!renoteId) {
-    logger.error(eventId, hookId, ' renoteId is null')
     return;
   }
 
