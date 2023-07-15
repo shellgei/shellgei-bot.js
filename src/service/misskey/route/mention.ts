@@ -25,7 +25,7 @@ const mention = async (req: Request, res: Response) => {
 
 
   // シェル芸を実行して結果を返す
-  new Worker(getMissKeyWorkerPath('exec'), {
+  new Worker(getMissKeyWorkerPath('mention'), {
     workerData: {
       secret, hookId, eventId, type, renoteId, text, userId
     }
