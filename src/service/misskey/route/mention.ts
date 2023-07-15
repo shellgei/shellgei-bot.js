@@ -1,9 +1,7 @@
 import {Request, Response} from 'express';
 import {Worker} from 'worker_threads';
 import {getMissKeyWorkerPath} from '../utils/getMissKeyWorkerPath';
-import logger from '../../../logger';
 import {getMissKeyHookId, getMissKeyHookSecret} from '../utils/getMissKeyHeader';
-import fetchMissKeyApi from '../utils/api';
 
 
 const mention = async (req: Request, res: Response) => {
@@ -16,13 +14,6 @@ const mention = async (req: Request, res: Response) => {
   const text = req?.body?.body?.note?.text;
   const userId = req?.body?.body?.note?.userId;
   // logger.log(JSON.stringify({secret, hookId, eventId, type, renoteId, text, userId},null,2))
-
-  // リアクションを返す
-  fetchMissKeyApi.addReaction({
-    noteId: renoteId,
-    reaction: '👀',
-  }).catch((err) => logger.error(err?.stack ?? err?.message ?? err ?? 'addReaction error'))
-
 
   // シェル芸を実行して結果を返す
   new Worker(getMissKeyWorkerPath('mention'), {

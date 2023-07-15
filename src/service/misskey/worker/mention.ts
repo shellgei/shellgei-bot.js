@@ -12,6 +12,12 @@ const worker = async (args: any) => {
     return;
   }
 
+  // リアクションを返す
+  fetchMissKeyApi.addReaction({
+    noteId: renoteId,
+    reaction: '👀',
+  }).catch((err) => logger.error(err?.stack ?? err?.message ?? err ?? 'addReaction error'))
+
   if (type !== 'mention') {
     logger.error(eventId, hookId, ' type is not match: ', type)
     return;
