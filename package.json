@@ -12,7 +12,7 @@
     "start:production": "NODE_ENV=production npm run start",
     "copy-compose-yml": "cat ./src/executor/docker-compose.yml > ./dist/executor/docker-compose.yml",
     "preshellgei": "npm run build",
-    "shellgei": "node -pe \"require('./dist/executor/execShellgei.js').execShellgei(process.argv[1])\""
+    "shellgei": "node -e \"require('./dist/executor/execShellgei.js').execShellgei(process.argv[1]).then((d) => console.log(d))\""
   },
   "dependencies": {
     "@types/express": "^4.17.17",

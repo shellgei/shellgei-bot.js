@@ -29,8 +29,8 @@ const worker = async (args: any) => {
     return;
   }
 
-  const oneLiner = text?.replace('@sh', '')?.trim();
-  if (!oneLiner) {
+  const command = text?.replace('@sh', '')?.trim();
+  if (!command) {
     logger.error(renoteId, eventId, hookId, ' entrypoint is null', text)
     return;
   }
@@ -40,9 +40,9 @@ const worker = async (args: any) => {
     return;
   }
 
-  logger.log(eventId, userId, hookId, renoteId, 'fired docker', JSON.stringify({text, oneLiner}));
+  logger.log(eventId, userId, hookId, renoteId, 'fired docker', JSON.stringify({text, command}));
 
-  const reply = execShellgei(oneLiner);
+  const reply = await execShellgei(command);
 
   await fetchMissKeyApi.createNote({
     localOnly: true,
