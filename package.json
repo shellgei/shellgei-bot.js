@@ -6,9 +6,13 @@
     "prebuild": "rm -rf ./dist",
     "build": "tsc --outDir ./dist",
     "prestart": "npm run build",
+    "postbuild": "npm run copy-compose-yml",
     "start": "TZ=Asia/Tokyo node --enable-source-maps dist/main.js",
     "start:dev": "NODE_ENV=development npm run start",
-    "start:production": "NODE_ENV=production npm run start"
+    "start:production": "NODE_ENV=production npm run start",
+    "copy-compose-yml": "cat ./src/executor/docker-compose.yml > ./dist/executor/docker-compose.yml",
+    "preshellgei": "npm run build",
+    "shellgei": "node -pe \"require('./dist/executor/execShellgei.js').execShellgei(process.argv[1])\""
   },
   "dependencies": {
     "@types/express": "^4.17.17",

@@ -3,6 +3,7 @@ import logger from '../../../logger';
 import fetchMissKeyApi from '../utils/api';
 import {workerWrapper} from '../../../utils/workerWrapper';
 import {workerData} from 'worker_threads';
+import {execShellgei} from '../../../executor/execShellgei';
 
 const worker = async (args: any) => {
   const {secret, hookId, eventId, type, renoteId, text, userId} = args;
@@ -28,8 +29,8 @@ const worker = async (args: any) => {
     return;
   }
 
-  const entrypoint = text?.replace('@sh', '')?.trim();
-  if (!entrypoint) {
+  const oneLiner = text?.replace('@sh', '')?.trim();
+  if (!oneLiner) {
     logger.error(renoteId, eventId, hookId, ' entrypoint is null', text)
     return;
   }
@@ -39,16 +40,16 @@ const worker = async (args: any) => {
     return;
   }
 
-  logger.log(eventId, userId, hookId, renoteId, 'fired docker', JSON.stringify({text, entrypoint}));
+  logger.log(eventId, userId, hookId, renoteId, 'fired docker', JSON.stringify({text, oneLiner}));
 
-  const reply = entrypoint;
+  const reply = execShellgei(oneLiner);
 
   await fetchMissKeyApi.createNote({
     localOnly: true,
     noExtractMentions: true,
     noExtractHashtags: false,
     noExtractEmojis: false,
-    text: reply + ' -- ok',
+    text: reply,
     renoteId,
   })
 }

@@ -17,7 +17,7 @@ const log = (...msg: any[]) => {
   console.log(message)
 }
 const error = (...msg: any[]) => {
-  const message = createMsg(...msg)
+  const message = `[Error]${createMsg(...msg)}`
   console.error(message)
 }
 

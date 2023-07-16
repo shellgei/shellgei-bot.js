@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  shell-gei:
+    image: theoldmoon0602/shellgeibot:master
+    logging:
+      driver: "none"
+    network_mode: "none"
+    restart: "no"
+    stop_grace_period: 20s
+    working_dir: '/tmp'
+    tmpfs: '/tmp'
+    # command: curl https://example.com/
+    # command: ls -hail
+
+

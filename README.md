@@ -5,6 +5,7 @@
 ```shell
 touch .env
 npm install
+docker pull theoldmoon0602/shellgeibot:master
 ```
 
 作成された.envに必要な環境変数を設定する。
@@ -25,3 +26,14 @@ tail -f nohup.out
 # バックグラウンド起動の終了
 kill $(ps alx | grep node | grep enable-source-maps | awk '{ print $3 }')
 ```
+
+```shell
+# シェル芸ボットで任意のシェル芸を実行する
+npm run shellgei '<シェル芸>'
+```
+
+# LICENSE
+
+MIT
+
+- 私的に趣味で作っているものなので、使用する際は自己責任でお願いします。
