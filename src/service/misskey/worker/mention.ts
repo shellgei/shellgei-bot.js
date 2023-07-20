@@ -1,4 +1,9 @@
-import {MISS_KEY_BOT_USER_ID, MISS_KEY_MENTION_SECRET} from '../../../env';
+import {
+  MISS_KEY_BOT_EXTERNAL_NAME,
+  MISS_KEY_BOT_NAME,
+  MISS_KEY_BOT_USER_ID,
+  MISS_KEY_MENTION_SECRET
+} from '../../../env';
 import logger from '../../../logger';
 import fetchMissKeyApi from '../utils/api';
 import {workerWrapper} from '../../../utils/workerWrapper';
@@ -18,6 +23,11 @@ const worker = async (args: any) => {
     return;
   }
 
+  if (text.includes(MISS_KEY_BOT_EXTERNAL_NAME)) {
+    logger.error(eventId, hookId, renoteId, text, 'external access',)
+    return;
+  }
+
   // リアクションを返す
   fetchMissKeyApi.addReaction({
     noteId: renoteId,
@@ -29,7 +39,7 @@ const worker = async (args: any) => {
     return;
   }
 
-  const command = text?.replace('@sh', '')?.trim();
+  const command = text?.replaceAll(MISS_KEY_BOT_NAME, '')?.trim();
   if (!command) {
     logger.error(renoteId, eventId, hookId, ' entrypoint is null', text)
     return;

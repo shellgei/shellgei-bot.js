@@ -19,6 +19,9 @@ const MISS_KEY_MENTION_SECRET: Readonly<string> = process.env.MISS_KEY_MENTION_S
 const MISS_KEY_CREATE_NOTE_API_KEY: Readonly<string> = process.env.MISS_KEY_CREATE_NOTE_API_KEY ?? '';
 const MISS_KEY_REACTION_API_KEY: Readonly<string> = process.env.MISS_KEY_REACTION_API_KEY ?? '';
 const MISS_KEY_BOT_USER_ID: Readonly<string> = process.env.MISS_KEY_BOT_USER_ID ?? '';
+const MISS_KEY_BOT_NAME = process.env.MISS_KEY_BOT_NAME ?? '@sh';
+const MISS_KEY_BOT_EXTERNAL_NAME = process.env.MISS_KEY_BOT_EXTERNAL_NAME ?? '@sh@mi.shellgei.org';
+
 
 export {
   DEV_MODE,
@@ -28,5 +31,7 @@ export {
   MISS_KEY_MENTION_SECRET,
   MISS_KEY_CREATE_NOTE_API_KEY,
   MISS_KEY_BOT_USER_ID,
-  MISS_KEY_REACTION_API_KEY
+  MISS_KEY_REACTION_API_KEY,
+  MISS_KEY_BOT_NAME,
+  MISS_KEY_BOT_EXTERNAL_NAME
 }

@@ -5,7 +5,7 @@ import {getMissKeyHookId, getMissKeyHookSecret} from '../utils/getMissKeyHeader'
 
 
 const mention = async (req: Request, res: Response) => {
-  // logger.log(JSON.stringify(req?.body, null, 2))
+  // require("fs").writeFileSync(require("path").join(require("path").resolve(), "body.json"), JSON.stringify(req?.body, null, 2), {encoding: "utf-8"})
 
   const secret = getMissKeyHookSecret(req?.headers);
   const hookId = getMissKeyHookId(req?.headers);
