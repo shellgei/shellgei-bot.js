@@ -6,7 +6,7 @@ import {workerData} from 'worker_threads';
 import {execShellgei} from '../../../executor/execShellgei';
 
 const worker = async (args: any) => {
-  const {secret, hookId, eventId, type, renoteId, text, userId} = args;
+  const {secret, hookId, eventId, type, renoteId, text, userId, hasRenote} = args;
 
   if (secret !== MISS_KEY_MENTION_SECRET) {
     logger.error(hookId, ' secret is not match: ', secret)
@@ -37,6 +37,11 @@ const worker = async (args: any) => {
 
   if (userId === MISS_KEY_BOT_USER_ID) {
     logger.error(renoteId, eventId, hookId, 'user is me')
+    return;
+  }
+
+  if (hasRenote) {
+    logger.error('renote is not allowed', renoteId)
     return;
   }
 

@@ -2,8 +2,6 @@ import {Request, Response} from 'express';
 import {Worker} from 'worker_threads';
 import {getMissKeyWorkerPath} from '../utils/getMissKeyWorkerPath';
 import {getMissKeyHookId, getMissKeyHookSecret} from '../utils/getMissKeyHeader';
-import logger from '../../../logger';
-import {existNoteId, setNoteIds} from '../utils/renoteIdCollection';
 
 
 const mention = async (req: Request, res: Response) => {
@@ -15,20 +13,13 @@ const mention = async (req: Request, res: Response) => {
   const renoteId = req?.body?.body?.note?.id;
   const text = req?.body?.body?.note?.text;
   const userId = req?.body?.body?.note?.userId;
-  const renoteCount = req?.body?.body?.note?.renoteCount;
-  // logger.log(JSON.stringify({secret, hookId, eventId, type, renoteId, text, userId},null,2))
-
-  if (existNoteId(renoteId)) {
-    logger.log('exist noteId', renoteId);
-    return;
-  } else {
-    setNoteIds(renoteId);
-  }
+  const hasRenote = Boolean(req?.body?.body?.note?.renote);
+  // logger.log(JSON.stringify({secret, hookId, eventId, type, renoteId, text, userId, hasRenote},null,2))
 
   // シェル芸を実行して結果を返す
   new Worker(getMissKeyWorkerPath('mention'), {
     workerData: {
-      secret, hookId, eventId, type, renoteId, text, userId
+      secret, hookId, eventId, type, renoteId, text, userId, hasRenote
     }
   })
 
