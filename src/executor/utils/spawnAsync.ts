@@ -8,6 +8,8 @@ const spawnAsync: SpawnAsync = (command, args, options = {}) => {
     const s = spawn(command, args, options);
 
     const forceKill = setTimeout(()=>{
+      s.stdout.pause();
+      s.stderr.pause();
       kill(s.pid!!,'SIGKILL');
     }, options.timeout ?? 10 * 1000)
 
