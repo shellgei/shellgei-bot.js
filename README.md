@@ -25,6 +25,8 @@ nohup npm run start:production &
 tail -f nohup.out
 # バックグラウンド起動の終了
 kill $(ps alx | grep node | grep enable-source-maps | awk '{ print $3 }')
+
+watch -n 10 './watchdog.sh > "watchdog.log"' &> /dev/null &
 ```
 
 ```shell
