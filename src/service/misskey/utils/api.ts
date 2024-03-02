@@ -14,6 +14,13 @@ const fetchApi = (pathName: string, apiKey: string) => {
       headers,
       body: JSON.stringify({...body, i: apiKey}),
     })
+
+    if (!res.ok) {
+      console.error('fetchApi error', {pathName}, res.status, res.statusText);
+      console.error('fetchApi error', {pathName}, await res.text());
+      return;
+    }
+
     return await res.text();
   };
 }
