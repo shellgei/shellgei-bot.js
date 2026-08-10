@@ -8,7 +8,7 @@ const tmpShellScriptPath = '/tmp/shellgei.sh'
 const execShellgei = async (command: string) => {
   const shellScriptPath = commandShellScript.createFile({command});
 
-  const args = ['compose', '-f', ymlPath, 'run', `--volumes=${shellScriptPath}:${tmpShellScriptPath}`, '--rm', '--remove-orphans', 'shell-gei', 'bash', tmpShellScriptPath];
+  const args = ['compose', '-f', ymlPath, '--progress', 'quiet', 'run', `--volumes=${shellScriptPath}:${tmpShellScriptPath}`, '--rm', '--remove-orphans', 'shell-gei', 'bash', tmpShellScriptPath];
   // logger.log("docker", ...args);
 
   const result = await spawnAsync('docker', args, {
