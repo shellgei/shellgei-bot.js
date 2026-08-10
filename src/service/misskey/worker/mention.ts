@@ -66,7 +66,7 @@ const worker = async (args: any) => {
     noExtractEmojis: false,
     text: reply,
     renoteId,
-  })
+  }).catch((err) => err?.stack ?? err?.message ?? err ?? 'createNote error')
 }
 
 workerWrapper(worker, workerData)

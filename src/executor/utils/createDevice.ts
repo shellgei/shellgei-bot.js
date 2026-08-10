@@ -1,0 +1,69 @@
+import {$} from 'zx';
+import logger from '../../logger';
+
+const IMG_SIZE = 10;
+
+const createVirtualDevice = async (imgPath: string, mountPath: string) => {
+  await $`dd if=/dev/zero of=${imgPath} bs=1M count=${IMG_SIZE} status=none`
+
+  const losetupResult = await $`losetup -f --show ${imgPath}`
+  const devicePath = losetupResult.stdout.trim();
+
+  await $`mkfs.ext4 ${devicePath}`.quiet();
+
+  await $`mount -o loop ${imgPath} ${mountPath}`;
+
+  await $`chmod 777 ${mountPath}`;
+
+  return devicePath;
+}
+
+const createDevice = async () => {
+  const result1 = await $`mktemp --suffix=.img`;
+  const imgPath = result1.stdout.trim();
+  const result2 = await $`mktemp -d`;
+  const mountPath = result2.stdout.trim();
+
+  let devicePath = undefined
+
+  try {
+    devicePath = await createVirtualDevice(imgPath, mountPath);
+  } catch (err: any) {
+    logger.error(err?.stack ?? err?.message ?? err ?? 'createDevice error')
+    deleteDevice({imgPath, devicePath, mountPath})
+  }
+
+  return {imgPath, devicePath, mountPath};
+}
+
+
+const deleteDevice = async ({mountPath, imgPath, devicePath}: {
+  mountPath: string,
+  imgPath: string,
+  devicePath?: string
+}) => {
+  // console.log("Starting cleanup...");
+
+  // 2. マウントを解除
+  // console.log(`Unmounting: ${mountPath}`);
+  await $`umount ${mountPath}`;
+
+  // 3. 仮想ディスクに紐づいているloop deviceを解除
+  if (devicePath) {
+    // onsole.log(`Detaching: ${devicePath}`);
+    await $`losetup -d ${devicePath}`;
+  }
+
+  // 4. 仮想ディスクイメージを削除
+  // console.log(`Removing virtual disk image: ${imgPath}`);
+  await $`rm -f ${imgPath}`;
+
+  // 5. マウントポイントを削除
+  // console.log(`Removing mount directory: ${mountPath}`);
+  await $`rmdir ${mountPath}`;
+
+  // console.log("Cleanup completed successfully.");
+}
+
+
+export {createDevice, deleteDevice}
