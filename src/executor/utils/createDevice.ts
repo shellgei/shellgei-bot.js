@@ -1,5 +1,9 @@
 import {$} from 'zx';
 import logger from '../../logger';
+import {existsSync} from 'node:fs';
+
+const uid = process.getuid?.();
+const gid = process.getgid?.();
 
 const IMG_SIZE = 10;
 
@@ -9,11 +13,9 @@ const createVirtualDevice = async (imgPath: string, mountPath: string) => {
   const losetupResult = await $`sudo losetup -f --show ${imgPath}`
   const devicePath = losetupResult.stdout.trim();
 
-  await $`sudo mkfs.ext4 ${devicePath}`.quiet();
+  await $`sudo mkfs.ext4 -E root_owner=${uid}:${gid} ${devicePath}`.quiet();
 
   await $`sudo mount -o loop ${imgPath} ${mountPath}`;
-
-  await $`chmod 777 ${mountPath}`;
 
   return devicePath;
 }
@@ -44,23 +46,30 @@ const deleteDevice = async ({mountPath, imgPath, devicePath}: {
 }) => {
   // console.log("Starting cleanup...");
 
-  // 2. マウントを解除
-  // console.log(`Unmounting: ${mountPath}`);
-  await $`sudo umount ${mountPath}`;
+  // 2. マウントされているか確認してからアンマウント
+  const mountCheck = await $`mountpoint -q ${mountPath}`.nothrow();
+  if (mountCheck.exitCode === 0) {
+    // console.log(`Unmounting: ${mountPath}`);
+    await $`sudo umount ${mountPath}`;
+  }
 
   // 3. 仮想ディスクに紐づいているloop deviceを解除
-  if (devicePath) {
-    // onsole.log(`Detaching: ${devicePath}`);
+  if (devicePath && existsSync(devicePath)) {
+    // console.log(`Detaching: ${devicePath}`);
     await $`sudo losetup -d ${devicePath}`;
   }
 
   // 4. 仮想ディスクイメージを削除
-  // console.log(`Removing virtual disk image: ${imgPath}`);
-  await $`rm -f ${imgPath}`;
+  if (existsSync(imgPath)) {
+    // console.log(`Removing virtual disk image: ${imgPath}`);
+    await $`rm -f ${imgPath}`;
+  }
 
   // 5. マウントポイントを削除
-  // console.log(`Removing mount directory: ${mountPath}`);
-  await $`rmdir ${mountPath}`;
+  if (existsSync(mountPath)) {
+    // console.log(`Removing mount directory: ${mountPath}`);
+    await $`rmdir ${mountPath}`;
+  }
 
   // console.log("Cleanup completed successfully.");
 }
