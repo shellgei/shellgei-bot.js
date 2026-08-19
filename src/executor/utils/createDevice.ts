@@ -6,12 +6,12 @@ const IMG_SIZE = 10;
 const createVirtualDevice = async (imgPath: string, mountPath: string) => {
   await $`dd if=/dev/zero of=${imgPath} bs=1M count=${IMG_SIZE} status=none`
 
-  const losetupResult = await $`losetup -f --show ${imgPath}`
+  const losetupResult = await $`sudo losetup -f --show ${imgPath}`
   const devicePath = losetupResult.stdout.trim();
 
-  await $`mkfs.ext4 ${devicePath}`.quiet();
+  await $`sudo mkfs.ext4 ${devicePath}`.quiet();
 
-  await $`mount -o loop ${imgPath} ${mountPath}`;
+  await $`sudo mount -o loop ${imgPath} ${mountPath}`;
 
   await $`chmod 777 ${mountPath}`;
 
@@ -46,12 +46,12 @@ const deleteDevice = async ({mountPath, imgPath, devicePath}: {
 
   // 2. マウントを解除
   // console.log(`Unmounting: ${mountPath}`);
-  await $`umount ${mountPath}`;
+  await $`sudo umount ${mountPath}`;
 
   // 3. 仮想ディスクに紐づいているloop deviceを解除
   if (devicePath) {
     // onsole.log(`Detaching: ${devicePath}`);
-    await $`losetup -d ${devicePath}`;
+    await $`sudo losetup -d ${devicePath}`;
   }
 
   // 4. 仮想ディスクイメージを削除
