@@ -1,26 +1,29 @@
 import * as path from 'path';
 import commandShellScript from './utils/commandShellScript';
 import {spawnAsync} from './utils/spawnAsync';
-import {createDevice, deleteDevice} from './utils/createDevice';
+import {createImage, deleteImage} from './utils/createImage';
 
 const ymlPath = path.relative(path.resolve(), path.join(__dirname, 'docker-compose.yml'))
 const tmpShellScriptPath = '/tmp/shellgei.sh'
+const containerImgPath = '/app/data/ext4.img'
 
 const execShellgei = async (command: string) => {
   const shellScriptPath = commandShellScript.createFile({command});
+  const imgPath = await createImage().catch((error) => {
+    throw error?.stack ?? error?.message ?? error ?? 'createImage error';
+  });
 
-  const devicePaths = await createDevice();
-  const {mountPath} = devicePaths;
+  try {
+    const args = ['compose', '-f', ymlPath, '--progress', 'quiet', 'run', `--volume=${imgPath}:${containerImgPath}`, `--volume=${shellScriptPath}:${tmpShellScriptPath}`, '--rm', '--remove-orphans', 'shell-gei', 'bash', tmpShellScriptPath];
+    // logger.log("docker", ...args);
 
-  const args = ['compose', '-f', ymlPath, '--progress', 'quiet', 'run', `--volumes=${mountPath}:/app/data`, `--volumes=${shellScriptPath}:${tmpShellScriptPath}`, '--rm', '--remove-orphans', 'shell-gei', 'bash', tmpShellScriptPath];
-  // logger.log("docker", ...args);
-
-  return await spawnAsync('docker', args, {
-    cwd: path.resolve()
-  }).catch((error) => error?.stack ?? error?.message ?? error).finally(() => {
-    commandShellScript.deleteFile(shellScriptPath);
-    deleteDevice(devicePaths)
-  })
+    return await spawnAsync('docker', args, {
+      cwd: path.resolve()
+    }).catch((error) => error?.stack ?? error?.message ?? error)
+  } finally {
+    await commandShellScript.deleteFile(shellScriptPath);
+    await deleteImage(imgPath);
+  }
 }
 
 export {execShellgei}
